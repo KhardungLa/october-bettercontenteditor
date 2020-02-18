@@ -1,0 +1,43 @@
+{% set size = __SELF__.property('size') ? __SELF__.property('size') : 1300 %}
+{% set size_small = __SELF__.property('size-small') ? __SELF__.property('size-small') : (size/2) %}
+{% set classes = __SELF__.property('class') ? __SELF__.property('class') : 'uk-height-large' %}
+{% set attributes = __SELF__.property('attributes') ? __SELF__.property('attributes') : '' %}
+{% set defaultImage = __SELF__.property('default') ? __SELF__.property('default') : '' %}
+{% set background = __SELF__.getImage(__SELF__.property('item'), defaultImage) %}
+{% set leaveOpen = __SELF__.property('leaveOpen') == 1 ? true : false %}
+
+{% if user %}
+
+{% if renderCountImage == 1 %}
+{% put scripts %}
+<script type="text/javascript" src="/plugins/dasrotequadrat/bettercontenteditor/assets/imageuploader.js"></script>
+{% endput %}
+{% endif %}
+
+<div id="{{__SELF__.property('item')}}" {{attributes}} class="js-upload uk-position-relative uk-text-center uk-background-cover {{classes}}" style="background-image: url({{ background | resize(size) }})">
+    <div class="uk-position-cover js-uploader">
+        <div class="uk-position-center">
+            <div class="uk-text-center">
+                <span uk-icon="icon: cloud-upload"></span>
+                <span class="uk-text-middle">Hier ein neues Bild hinziehen oder</span>
+                <div uk-form-custom>
+                    <input type="file" multiple>
+                    <span class="uk-link">eines auswählen</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if not leaveOpen %}
+</div>
+    {% endif %}
+{% else %}
+<div class="uk-background-cover {{classes}}"
+     {{attributes}}
+     data-src="{{ background | resize(size_small) }}"
+     data-srcset="{{ background | resize(size_small) }} 650w,
+                  {{ background | resize(size) }} 1300w"
+     data-sizes="(min-width: 650px) 650px, 100vw" uk-img>
+    {% if not leaveOpen %}
+</div>
+    {% endif %}
+{% endif %}

@@ -1,0 +1,26 @@
+{
+    "name": "example",
+    "description": "An theme for example",
+    "repository": {
+        "type": "",
+        "url": ""
+    },
+    "version": "1.0.0",
+    "author": "DEINNAME",
+    "license": "ISC",
+    "scripts": {
+        "build": "parcel build scripts/contenteditor.js -d ../../../assets --no-source-maps --no-content-hash --experimental-scope-hoisting --public-url ./",
+        "watch": "parcel watch scripts/contenteditor.js -d ../../../assets --public-url ./"
+    },
+    "alias": {
+        "vue$": "vue/dist/vue.min.js"
+    },
+    "devDependencies": {
+        "cssnano": "^4.1.10",
+        "sass": "^1.25.0"
+    },
+    "dependencies": {
+        "uikit": "^3.3.1",
+        "vue": "^2.6.11"
+    }
+}

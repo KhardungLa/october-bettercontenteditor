@@ -1,0 +1,28 @@
+{
+    "name": "imageuploader",
+    "description": "An inline imageuploader",
+    "repository": {
+        "type": "",
+        "url": ""
+    },
+    "version": "1.0.0",
+    "author": "DasRoteQuadrat",
+    "license": "ISC",
+    "scripts": {
+        "build": "parcel build ./imageuploader.js -d ../../../assets/ --no-source-maps --public-url ./",
+        "watch": "parcel watch ./imageuploader.js -d ../../../assets/ --public-url ./"
+    },
+    "alias": {
+        "vue$": "vue/dist/vue.min.js"
+    },
+    "devDependencies": {
+        "babel-core": "^6.26.3",
+        "babel-preset-env": "^1.7.0",
+        "cssnano": "^4.1.10",
+        "sass": "^1.25.0"
+    },
+    "dependencies": {
+        "uikit": "^3.3.2",
+        "vue": "^2.6.11"
+    }
+}
