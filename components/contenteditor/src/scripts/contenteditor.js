@@ -21,13 +21,9 @@ new Vue({
             const regions = ev.detail().regions;
             for (let name in regions) {
                 if (regions.hasOwnProperty(name)) {
+                    const content = document.querySelector('*[data-file="' + name + '"]').innerHTML;
                     const component = $('*[data-file="' + name + '"]').data('component');
-                    $.request(component, {
-                        data: {
-                            file: name,
-                            content: regions[name]
-                        }
-                    });
+                    $.request(component, {data: {file: name, content: content}});
                 }
             }
 
@@ -60,7 +56,9 @@ new Vue({
                     } catch (e) {
                         console.log(e);
                     }
-                    this.close();
+                    editor._ignition.state("ready");
+                    editor.dispatchEvent(editor.createEvent('stopped'));
+//                    this.close();
                 }
             }
         });

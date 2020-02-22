@@ -1,5 +1,6 @@
 <?php namespace DasRoteQuadrat\BetterContentEditor\Components;
 
+use Log;
 use Cache;
 use File;
 use BackendAuth;
@@ -18,7 +19,6 @@ class ContentEditor extends ComponentBase
     public $class;
     public $buttons;
     public $palettes;
-
     public $renderCount;
 
     public function componentDetails()
@@ -63,6 +63,7 @@ class ContentEditor extends ComponentBase
 
     public function onRun()
     {
+        $this->renderCount = 0;
         if ($this->checkEditor()) {
 
             $this->buttons = Settings::get('enabled_buttons');
@@ -76,8 +77,7 @@ class ContentEditor extends ComponentBase
 
     public function onRender()
     {
-        $this->renderCount = $this->page['renderCount'] += 1;
-
+        $this->renderCount += 1;
         $this->defaultFile = $this->property('file');
         $this->file = $this->setFile($this->property('file'));
         $this->fixture = $this->property('fixture');

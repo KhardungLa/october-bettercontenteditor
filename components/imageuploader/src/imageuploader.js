@@ -9,26 +9,26 @@ new Vue({
     delimiters: ['${', '}'],
     data() {return {usesEditor: false, editMode: true}},
     mounted() {
-        if (editor !== undefined) {
-            this.usesEditor = true;
-            if (editor._ignition.state() === "ready") {
-                document.querySelectorAll('.js-uploader').forEach(el => {
-                    el.style.display = 'none';
+        setTimeout(() => {
+            if (window.editor !== undefined) {
+                this.usesEditor = true;
+                if (editor._ignition.state() === "ready") {
+                    document.querySelectorAll('.js-uploader').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                }
+                editor.addEventListener('start', () => {
+                    document.querySelectorAll('.js-uploader').forEach(el => {
+                        el.style.display = 'block';
+                    });
+                });
+                editor.addEventListener('stopped', () => {
+                    document.querySelectorAll('.js-uploader').forEach(el => {
+                        el.style.display = 'none';
+                    });
                 });
             }
-            editor.addEventListener('start', () => {
-                console.log('start');
-                document.querySelectorAll('.js-uploader').forEach(el => {
-                    el.style.display = 'block';
-                });
-            });
-            editor.addEventListener('stopped', () => {
-                console.log('stop');
-                document.querySelectorAll('.js-uploader').forEach(el => {
-                    el.style.display = 'none';
-                });
-            });
-        }
+        }, 500);
         let element = UIkit.upload('.js-upload', {
             url: 'dasrotequadrat/image/upload',
             multiple: false,
@@ -38,7 +38,11 @@ new Vue({
                 component.params = {item: element.getAttribute('id')};
             },
             completeAll: xhr => {
-                element.style.backgroundImage = `url(${JSON.parse(xhr.response).url})`;
+                if (element.classList.contains('uses-image')) {
+                    element.querySelector('img').src = JSON.parse(xhr.response).url;
+                } else {
+                    element.style.backgroundImage = `url(${JSON.parse(xhr.response).url})`;
+                }
                 UIkit.notification('Bild wurde gespeichert');
             }
         });
