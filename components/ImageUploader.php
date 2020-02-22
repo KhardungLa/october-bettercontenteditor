@@ -17,6 +17,7 @@ class ImageUploader extends ComponentBase {
     }
 
     public function onRun() {
+        $this->renderCount = 0;
         $this->page['user'] = BackendAuth::getUser();
         if ($this->page['user']) {
 //            $this->addJs('assets/js/plugin.js');
@@ -31,6 +32,6 @@ class ImageUploader extends ComponentBase {
 
     public function onRender()
     {
-        $this->renderCount = $this->page['renderCountImage'] += 1;
+        $this->renderCount += 1;
     }
 }

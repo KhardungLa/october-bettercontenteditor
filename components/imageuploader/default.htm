@@ -8,7 +8,7 @@
 
 {% if user %}
 
-    {% if renderCountImage == 1 %}
+    {% if __SELF__.renderCount == 1 %}
     {% put scripts %}
     <script type="text/javascript" src="/plugins/dasrotequadrat/bettercontenteditor/assets/imageuploader.js"></script>
     {% endput %}
@@ -55,7 +55,7 @@
      {{attributes}}
      data-src="{{ background | resize(size_small) }}"
      data-srcset="{{ background | resize(size_small) }} 650w,
-                  {{ background | resize(size) }} 1300w"
+                  {{ background | resize(size) }} 1000w"
      data-sizes="(min-width: 650px) 650px, 100vw" uk-img>
     {% if not leaveOpen and __SELF__.property('tag') != 'img' %}
 </{% if __SELF__.property('tag') %}{{__SELF__.property('tag')}}{% else %}div{% endif %}>
