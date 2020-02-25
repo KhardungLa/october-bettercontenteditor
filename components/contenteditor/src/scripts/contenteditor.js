@@ -1,11 +1,21 @@
 import Vue from 'vue$';
 import UIkit from 'uikit';
+import Revisions from './Revisions';
 import '../styles/main.scss';
 import './samuell.js';
 
 Vue.config.devtools = false;
 Vue.config.productionTip = false;
+
+const el = document.querySelector('body > div');
+const wrapper = document.createElement('div');
+wrapper.setAttribute('id', 'content-editor-app');
+el.parentNode.insertBefore(wrapper, el);
+wrapper.appendChild(el);
+
 new Vue({
+    delimiters: ['${', '}'],
+    components: {'revision-container': Revisions},
     data() {
         return {saving: false, visible: true}
     },
@@ -16,14 +26,19 @@ new Vue({
             this.askToClose();
             return false;
         });
+
         editor.addEventListener('saved', ev => {
             editor.busy(true);
             const regions = ev.detail().regions;
             for (let name in regions) {
                 if (regions.hasOwnProperty(name)) {
-                    const content = document.querySelector('*[data-file="' + name + '"]').innerHTML;
-                    const component = $('*[data-file="' + name + '"]').data('component');
-                    $.request(component, {data: {file: name, content: content}});
+                    const content = document.querySelector('*[data-file="' + name + '"]');
+                    const isFixture = content.hasAttribute('data-fixture');
+                    const htmlData = isFixture ? content.innerHTML.trim() : regions[name];
+                    $.request(
+                        content.getAttribute('data-component'),
+                        {data: {file: name, content: htmlData}}
+                    );
                 }
             }
 
@@ -31,8 +46,8 @@ new Vue({
             setTimeout(function () {
                 editor.busy(false);
             }, 600);
-
         });
+
         window.addEventListener("keyup", e => {
             if (e.key === "Escape") {
                 if (editor._ignition.state() === 'ready') {
@@ -47,6 +62,7 @@ new Vue({
                 }
             }
         });
+
         window.addEventListener("keydown", e => {
             if (editor._ignition.state() !== 'ready') {
                 if ((e.metaKey || e.ctrlKey) && e.key === "s") {
@@ -62,6 +78,7 @@ new Vue({
                 }
             }
         });
+
         window.addEventListener("keydown", e => {
             if ((e.metaKey || e.ctrlKey) && e.key === "e") {
                 e.preventDefault();
@@ -104,6 +121,9 @@ new Vue({
             }
             editor._ignition.state("ready");
             editor.dispatchEvent(editor.createEvent('stopped'));
+        },
+        elementSelected(file) {
+            console.log(file);
         }
     }
-}).$mount(document.querySelector('main'));
+}).$mount('#content-editor-app');

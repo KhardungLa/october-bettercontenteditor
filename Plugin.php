@@ -1,5 +1,10 @@
 <?php namespace DasRoteQuadrat\BetterContentEditor;
 
+use Log;
+use Event;
+use BackendAuth;
+use Session;
+use Illuminate\Support\Facades\Redirect;
 use Backend;
 use System\Classes\PluginBase;
 
@@ -8,11 +13,21 @@ use System\Classes\PluginBase;
  */
 class Plugin extends PluginBase
 {
-    /**
-     * Returns information about this plugin.
-     *
-     * @return array
-     */
+    public $elevated = true;
+
+    public function boot() {
+        Event::listen('backend.user.login', function($user) {
+            if ($user->role->code === 'publisher') {
+                Session::put('redirectAfterLogin', '/');
+            }
+        });
+        Event::listen('backend.page.beforeDisplay', function($controller, $action, $params) {
+            if ($redirectAfterLogin = Session::pull('redirectAfterLogin', null)) {
+                return Redirect::to($redirectAfterLogin); // do redirect
+            }
+        });
+    }
+
     public function pluginDetails()
     {
         return [

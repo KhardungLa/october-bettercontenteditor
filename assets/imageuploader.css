@@ -1,18 +1,1 @@
-.js-upload .uk-position-cover {
-  background-color: rgba(251, 248, 235, 0.7);
-  opacity: 0;
-  transition: opacity 0.6s;
-  transition-delay: 0.5s;
-  color: #222;
-}
-
-.js-upload .uk-position-cover:hover {
-  opacity: 1;
-}
-
-.js-upload .uk-link {
-  color: #2d415a;
-  font-weight: bold;
-}
-
-/*# sourceMappingURL=imageuploader.css.map */
+.js-upload .uk-position-cover{background-color:rgba(251,248,235,.7);opacity:0;transition:opacity .6s;transition-delay:.5s;color:#222}.js-upload .uk-position-cover:hover{opacity:1}.js-upload .uk-link{color:#2d415a;font-weight:700}

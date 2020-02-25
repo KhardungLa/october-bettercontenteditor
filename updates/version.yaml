@@ -1,3 +1,6 @@
 1.0.1:
   - Initialize plugin.
   - create_images_table.php
+1.0.2:
+  - Add revisions.
+  - create_revisions_table.php

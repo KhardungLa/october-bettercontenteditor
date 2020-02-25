@@ -16,11 +16,14 @@
         "vue$": "vue/dist/vue.min.js"
     },
     "devDependencies": {
+        "@vue/component-compiler-utils": "^3.1.1",
         "cssnano": "^4.1.10",
-        "sass": "^1.25.0"
+        "sass": "^1.25.0",
+        "vue-template-compiler": "^2.6.11"
     },
     "dependencies": {
         "uikit": "^3.3.1",
-        "vue": "^2.6.11"
+        "vue": "^2.6.11",
+        "vue-hot-reload-api": "^2.3.4"
     }
 }

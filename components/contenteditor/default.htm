@@ -1,3 +1,7 @@
+{% if hasRevisions %}
+<revision-container file="{{ __SELF__.file }}" component="{{ __SELF__ }}::onRevisions"></revision-container>
+{% endif %}
+
 <{% if __SELF__.fixture %}{{ __SELF__.fixture }}{% else %}div{% endif %}
     {% if __SELF__.fixture %}data-fixture data-ce-tag="p" {% else %}data-editable{% endif %}
     data-component="{{ __SELF__ }}::onSave"
@@ -5,7 +9,6 @@
     data-tools="{{ __SELF__.tools }}"
     data-name="{{ __SELF__.file }}"
     {% if __SELF__.class %}class="{{ __SELF__.class }}"{% endif %}>
-
     {% if (__SELF__.content|raw) == '' %}
     {% if __SELF__.fixture %}...hier Inhalt einfügen...{% else %}<p>...hier Inhalt einfügen...</p>{% endif %}
     {% else %}

@@ -1,12 +1,13 @@
 <?php namespace DasRoteQuadrat\BetterContentEditor\Components;
 
+use Carbon\Carbon;
 use Log;
 use Cache;
 use File;
 use BackendAuth;
 use Cms\Classes\Content;
 use Cms\Classes\ComponentBase;
-
+use DasRoteQuadrat\BetterContentEditor\Models\Content as CmsContent;
 use DasRoteQuadrat\BetterContentEditor\Models\Settings;
 
 class ContentEditor extends ComponentBase
@@ -87,6 +88,11 @@ class ContentEditor extends ComponentBase
         $content = $this->getFile();
 
         if ($this->checkEditor()) {
+            $revisions = CmsContent::where('item', $this->file)->first();
+            $this->page['hasRevisions'] = false;
+            if ($revisions && count($revisions->revision_history)) {
+                $this->page['hasRevisions'] = true;
+            }
             $this->content = $content;
         } else {
             return Cache::remember('contenteditor::content-' . $this->file, now()->addHours(24), function () use ($content) {
@@ -106,18 +112,35 @@ class ContentEditor extends ComponentBase
             } else {
                 $fileContent = Content::inTheme($this->getTheme()); // create new content file if not exists
             }
+            $contentToSave = post('content');
 
             $fileContent->fill([
                 'fileName' => $fileName,
-                'markup' => post('content')
+                'markup' => $contentToSave
             ]);
 
             $fileContent->save();
 
+            $contentStore = CmsContent::firstOrCreate(['item' => $fileName]);
+            $contentStore->content = $contentToSave;
+            $contentStore->save();
             // Clear cache if file was changed
             Cache::forget('contenteditor::content-' . $fileName);
         }
     }
+
+    public function onRevisions()
+    {
+        if ($this->checkEditor()) {
+            $revisions = CmsContent::where('item', post('file'))->first();
+            return $revisions->revision_history->map(function($revision) {
+                $newRevision = $revision;
+                $newRevision['date'] = $revision->updated_at->format('d.m.Y (H:i)');
+                return $revision;
+            });
+        }
+    }
+
 
     public function getFile()
     {
