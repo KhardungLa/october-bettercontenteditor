@@ -1,6 +1,10 @@
 $brand-primary: #079397;
 $brand-secondary: #df376e;
 $color: #333;
+
+span.ce-element {
+    display: block;
+}
 .ct-widget {
     .ct-tag {
         background-color: $brand-secondary !important;
