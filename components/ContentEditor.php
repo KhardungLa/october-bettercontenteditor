@@ -1,10 +1,12 @@
 <?php namespace DasRoteQuadrat\BetterContentEditor\Components;
 
+use Lang;
 use Carbon\Carbon;
 use Log;
 use Cache;
 use File;
 use BackendAuth;
+use App;
 use Cms\Classes\Content;
 use Cms\Classes\ComponentBase;
 use DasRoteQuadrat\BetterContentEditor\Models\Content as CmsContent;
@@ -72,33 +74,43 @@ class ContentEditor extends ComponentBase
 
             // put content tools js + css
             $this->addCss('assets/content-tools.min.css');
-            $this->addCss('assets/contenteditor.css');
+//            $this->addCss('assets/contenteditor.css');
         }
     }
 
     public function onRender()
     {
         $this->renderCount += 1;
+
         $this->defaultFile = $this->property('file');
         $this->file = $this->setFile($this->property('file'));
-        $this->fixture = $this->property('fixture');
-        $this->tools = $this->property('tools');
-        $this->class = $this->property('class');
-
         $content = $this->getFile();
 
         if ($this->checkEditor()) {
-            $revisions = CmsContent::where('item', $this->file)->first();
-            $this->page['hasRevisions'] = false;
-            if ($revisions && count($revisions->revision_history)) {
-                $this->page['hasRevisions'] = true;
+            $this->fixture = $this->property('fixture');
+            $this->tools = $this->property('tools');
+            $this->class = $this->property('class');
+            $this->page['localisations'] = Lang::get('dasrotequadrat.bettercontenteditor::lang.translations');
+            $this->page['hasRevisions'] = $this->hasRevisions();
+            $this->page['lang'] = App::getLocale();
+            if ($this->page['lang'] !== 'en') {
+                $this->page['translations'] = file_get_contents(__DIR__ .'/contenteditor/translations/' . $this->page['lang'] . '.json', FALSE, NULL);
             }
             $this->content = $content;
         } else {
-            return Cache::remember('contenteditor::content-' . $this->file, now()->addHours(24), function () use ($content) {
+            return Cache::remember('bettercontenteditor::content-' . $this->file, now()->addHours(24), function () use ($content) {
                 return $this->renderPartial('@render.htm', ['content' => $content]);
             });
         }
+    }
+
+    protected function hasRevisions() {
+        $result = false;
+        $revisions = CmsContent::where('item', $this->getItemName())->first();
+        if ($revisions && count($revisions->revision_history->filter(function($item) {return $item->old_value;}))) {
+            $result = true;
+        }
+        return $result;
     }
 
     public function onSave()
@@ -108,9 +120,9 @@ class ContentEditor extends ComponentBase
             $fileName = post('file');
 
             if ($load = Content::load($this->getTheme(), $fileName)) {
-                $fileContent = $load; // load existed content file
+                $fileContent = $load;
             } else {
-                $fileContent = Content::inTheme($this->getTheme()); // create new content file if not exists
+                $fileContent = Content::inTheme($this->getTheme());
             }
             $contentToSave = post('content');
 
@@ -121,45 +133,43 @@ class ContentEditor extends ComponentBase
 
             $fileContent->save();
 
-            $contentStore = CmsContent::firstOrCreate(['item' => $fileName]);
+            $itemName = $this->getItemName($fileName);
+            $contentStore = CmsContent::firstOrCreate(['item' => $itemName]);
             $contentStore->content = $contentToSave;
             $contentStore->save();
-            // Clear cache if file was changed
-            Cache::forget('contenteditor::content-' . $fileName);
+            Cache::forget('bettercontenteditor::content-' . $fileName);
         }
     }
 
     public function onRevisions()
     {
+        $itemName = $this->getItemName(post('file'));
         if ($this->checkEditor()) {
-            $revisions = CmsContent::where('item', post('file'))->first();
-            return $revisions->revision_history->map(function($revision) {
+            $revisions = CmsContent::where('item', $itemName)->first();
+            return !$revisions ? [] : $revisions->revision_history->map(function($revision) {
                 $newRevision = $revision;
-                $newRevision['date'] = $revision->updated_at->format('d.m.Y (H:i)');
+                Carbon::setLocale( App::getLocale() );
+                $newRevision['date'] = Carbon::createFromFormat( 'Y-m-d H:i:s', $revision->updated_at )->diffForHumans();
                 return $revision;
             });
         }
     }
 
-
     public function getFile()
     {
         if (Content::load($this->getTheme(), $this->file)) {
             return $this->renderContent($this->file);
-        } else if (Content::load($this->getTheme(), $this->defaultFile)) { // if no locale file exists -> render the default, without language suffix
+        } else if (Content::load($this->getTheme(), $this->defaultFile)) {
             return $this->renderContent($this->defaultFile);
         }
-
         return '';
     }
 
     public function setFile($file)
     {
-        // Compatability with RainLab.Translate
         if ($this->translateExists()) {
             return $this->setTranslateFile($file);
         }
-
         return $file;
     }
 
@@ -181,7 +191,7 @@ class ContentEditor extends ComponentBase
     public function checkEditor()
     {
         $backendUser = BackendAuth::getUser();
-        return $backendUser && $backendUser->hasAccess('samuell.contenteditor.editor');
+        return $backendUser && $backendUser->hasAccess('dasrotequadrat.bettercontenteditor.editor');
     }
 
     public function fileExists($file) {
@@ -191,5 +201,9 @@ class ContentEditor extends ComponentBase
     public function translateExists()
     {
         return class_exists('\RainLab\Translate\Classes\Translator');
+    }
+
+    protected function getItemName($file = NULL) {
+        return $this->getTheme()->getDirName() . '.' . ($file ? $file : $this->file);
     }
 }

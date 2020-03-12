@@ -1,6 +1,6 @@
 import Vue from 'vue$';
 import UIkit from 'uikit';
-import './main.scss';
+import './imageuploader.scss';
 
 window.UIkit = UIkit;
 Vue.config.devtools = false;
@@ -48,4 +48,4 @@ new Vue({
         });
 
     }
-}).$mount('#app2');
+}).$mount('#image-uploader-app');

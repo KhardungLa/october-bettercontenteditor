@@ -14,13 +14,13 @@ const siteUrl = document.location.origin; // get site url for requests
 
 ContentTools.RESTRICTED_ATTRIBUTES['*'] = []; // allow style attribute on elements
 
-
 /*
 * Fixture focus
 */
+
 ContentEdit.Root.get().bind('focus', function (element) {
-    var dataTools = element._parent._domElement.dataset.tools
-    var tools;
+    const dataTools = element._parent._domElement.dataset.tools;
+    let tools;
     switch (dataTools) {
         case '':
         case undefined:
@@ -309,31 +309,5 @@ function imageUploader(dialog) {
 }
 ContentTools.IMAGE_UPLOADER = imageUploader;
 
-ContentTools.ENABLE_DRAG_CLONING = true;
+ContentTools.ENABLE_DRAG_CLONING = false;
 
-setLanguage(document.lang);
-
-function setLanguage(lang) {
-    if (lang === 'en') return;
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', siteUrl + '/contenteditor/translations/'+lang, true);
-    function onStateChange (ev) {
-        var translations;
-        if (ev.target.readyState == 4) {
-            // Convert the JSON data to a native Object
-            translations = JSON.parse(ev.target.responseText);
-
-            // Add the translations for the French language
-            ContentEdit.addTranslations(lang, translations);
-
-            // Set French as the editors current language
-            ContentEdit.LANGUAGE = lang;
-            ContentEdit.ENABLE_DRAG_CLONING = true;
-        }
-    }
-
-    xhr.addEventListener('readystatechange', onStateChange);
-
-// Load the language
-    xhr.send(null);
-}

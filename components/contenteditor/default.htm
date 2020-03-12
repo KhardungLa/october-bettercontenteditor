@@ -1,29 +1,31 @@
-{% if hasRevisions %}
-<revision-container file="{{ __SELF__.file }}" component="{{ __SELF__ }}::onRevisions"></revision-container>
-{% endif %}
-
 <{% if __SELF__.fixture %}{{ __SELF__.fixture }}{% else %}div{% endif %}
     {% if __SELF__.fixture %}data-fixture data-ce-tag="p" {% else %}data-editable{% endif %}
+    {% if hasRevisions %}data-getrevisions="{{ __SELF__ }}::onRevisions"{% endif %}
     data-component="{{ __SELF__ }}::onSave"
     data-file="{{ __SELF__.file }}"
     data-tools="{{ __SELF__.tools }}"
     data-name="{{ __SELF__.file }}"
     {% if __SELF__.class %}class="{{ __SELF__.class }}"{% endif %}>
     {% if (__SELF__.content|raw) == '' %}
-    {% if __SELF__.fixture %}...hier Inhalt einfügen...{% else %}<p>...hier Inhalt einfügen...</p>{% endif %}
+        {% if __SELF__.fixture %}
+            ...{{localisations['addContent']}}...
+        {% else %}
+        <p>...{{localisations['addContent']}}...</p>
+        {% endif %}
     {% else %}
     {{__SELF__.content|raw}}
     {% endif %}
 </{% if __SELF__.fixture %}{{ __SELF__.fixture }}{% else %}div{% endif %}>
 
 {% if __SELF__.renderCount == 1 %}
-
+    {% put styles %}
+    <link rel="stylesheet" href="/plugins/dasrotequadrat/bettercontenteditor/assets/contenteditor.css" />
+    {% endput %}
     {% put scripts %}
+    <script type="text/javascript">document.lang = '{{ lang }}';</script>
+    <script type="text/javascript">document.contentEditorTranslations = {{ localisations | json_encode | raw}};</script>
     <script type="text/javascript" src="/plugins/dasrotequadrat/bettercontenteditor/assets/content-tools.min.js"></script>
     <script type="text/javascript" src="/plugins/dasrotequadrat/bettercontenteditor/assets/contenteditor.js"></script>
-    {% endput %}
-    <script type="text/javascript">document.lang = '{{ activeLocale }}';</script>
-    {% put scripts %}
     <script type="text/javascript">
 
     /* CONTENT EDITOR SCRIPT START */
@@ -36,6 +38,10 @@
         ['{{ __SELF__.buttons | join("', '") | raw }}'],
         ['undo', 'redo', 'remove']
     ]);
+    {% if lang != 'en' %}
+    ContentEdit.addTranslations('{{lang}}', {{translations |raw}});
+    ContentEdit.LANGUAGE = '{{lang}}';
+    {% endif %}
     /* CONTENT EDITOR SCRIPT END */
     </script>
     {% endput %}

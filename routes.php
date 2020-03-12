@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use DasRoteQuadrat\BetterContentEditor\Models\Images;
 
 Route::group(['prefix' => 'contenteditor'], function () {
-    Route::get('translations/{lang}', 'DasRoteQuadrat\BetterContentEditor\Controllers\Languages@get');
     Route::post('image/upload', 'DasRoteQuadrat\BetterContentEditor\Controllers\ImageController@upload');
     Route::post('image/save', 'DasRoteQuadrat\BetterContentEditor\Controllers\ImageController@save');
 

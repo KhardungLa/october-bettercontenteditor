@@ -63,11 +63,11 @@ class Plugin extends PluginBase
     public function registerPermissions()
     {
         return [
-            'samuell.contenteditor.editor' => [
+            'dasrotequadrat.bettercontenteditor.editor' => [
                 'tab' => 'Content Editor',
                 'label' => 'Allow to use content editor on frontend'
             ],
-            'samuell.contenteditor.access_settings' => [
+            'dasrotequadrat.bettercontenteditor.access_settings' => [
                 'tab' => 'Content Editor',
                 'label' => 'Access content editor settings'
             ],

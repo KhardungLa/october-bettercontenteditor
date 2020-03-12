@@ -1,6 +1,7 @@
 <?php namespace DasRoteQuadrat\BetterContentEditor\Models;
 
 use Model;
+use BackendAuth;
 use October\Rain\Database\Traits\Revisionable;
 
 class Content extends Model
@@ -15,5 +16,10 @@ class Content extends Model
     public $morphMany = [
         'revision_history' => ['System\Models\Revision', 'name' => 'revisionable']
     ];
+
+    public function getRevisionableUser()
+    {
+        return BackendAuth::getUser()->id;
+    }
 
 }

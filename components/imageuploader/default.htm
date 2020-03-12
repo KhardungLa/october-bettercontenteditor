@@ -9,6 +9,9 @@
 {% if user %}
 
     {% if __SELF__.renderCount == 1 %}
+    {% put styles %}
+    <link rel="stylesheet" href="/plugins/dasrotequadrat/bettercontenteditor/assets/imageuploader.css" />
+    {% endput %}
     {% put scripts %}
     <script type="text/javascript" src="/plugins/dasrotequadrat/bettercontenteditor/assets/imageuploader.js"></script>
     {% endput %}

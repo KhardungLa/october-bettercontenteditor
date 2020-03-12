@@ -10,7 +10,7 @@ class Settings extends Model
 {
     public $implement = ['System.Behaviors.SettingsModel'];
 
-    public $settingsCode = 'samuell_contenteditor_settings';
+    public $settingsCode = 'dasrotequadrat_bettercontenteditor_settings';
 
     public $settingsFields = 'fields.yaml';
 

@@ -54,16 +54,22 @@ $color: #333;
         }
     }
     &.ct-toolbox {
-        background: rgba(#fff, .9) !important;
-        border: none !important;
-        box-shadow: 0 5px 10px rgba(0,0,0, .2) !important;
+        background: rgba(#fff, .6) !important;
+        -webkit-backdrop-filter: blur(0.2rem);
+        backdrop-filter: blur(0.2rem);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: -0.25rem -0.25rem 0.5rem rgba(255, 255, 255, 0.07), 0.25rem 0.25rem 0.5rem rgba(0, 0, 0, 0.12), -0.75rem -0.75rem 1.75rem rgba(255, 255, 255, 0.07), 0.75rem 0.75rem 1.75rem rgba(0, 0, 0, 0.12), inset 8rem 8rem 8rem rgba(0, 0, 0, 0.05), inset -8rem -8rem 8rem rgba(255, 255, 255, 0.05);
         width: auto;
         max-width: 248px;
+        transition: background .5s;
+        &:hover {
+            background: rgba(#fff, .8) !important;
+        }
         .ct-grip {
             border-bottom: solid 1px rgba($color, .4);
             width: calc(100% + 16px);
             margin-left: -8px;
-            background-image: url(../images/move.svg);
+            background-image: url(./images/move.svg);
             background-repeat: no-repeat;
             background-position: center center;
             opacity: .8;
@@ -111,7 +117,7 @@ $color: #333;
             background-color: $brand-primary;
             &:before {
                 transform: none !important;
-                background-image: url(../images/pencil.svg);
+                background-image: url(./images/pencil.svg);
             }
             &:hover {
                 background-color: darken($brand-primary, 2%);
@@ -120,7 +126,7 @@ $color: #333;
         &[class*='confirm'] {
             background-color: $brand-primary;
             &:before {
-                background-image: url(../images/check.svg);
+                background-image: url(./images/check.svg);
             }
             &:hover {
                 background-color: darken($brand-primary, 2%);
@@ -129,7 +135,7 @@ $color: #333;
         &[class*='cancel'] {
             background-color: $brand-secondary;
             &:before {
-                background-image: url(../images/close.svg);
+                background-image: url(./images/close.svg);
             }
             &:hover {
                 background-color: darken($brand-secondary, 2%);
@@ -183,3 +189,26 @@ main {
     }
 }
 
+.revision-selector {
+    position: absolute;
+    margin-top: -30px;
+    z-index: 100;
+    .revision-list {
+        background: rgba(#fff, .9);
+        border: solid 1px #999;
+        padding: 10px;
+        li {
+            color: #222 !important;
+            text-align: left;
+        }
+    }
+    li {
+        &.uk-active {
+            font-weight: bold;
+        }
+    }
+}
+
+.ct-tool--clock::before {
+    content: "\e94e";
+}

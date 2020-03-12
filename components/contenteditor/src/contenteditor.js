@@ -1,23 +1,17 @@
 import Vue from 'vue$';
 import UIkit from 'uikit';
-import Revisions from './Revisions';
-import '../styles/main.scss';
+import RevisionTool from './RevisionTool';
+import './contenteditor.scss';
 import './samuell.js';
 
+Vue.config.shadowRoot = true;
 Vue.config.devtools = false;
 Vue.config.productionTip = false;
 
-const el = document.querySelector('body > div');
-const wrapper = document.createElement('div');
-wrapper.setAttribute('id', 'content-editor-app');
-el.parentNode.insertBefore(wrapper, el);
-wrapper.appendChild(el);
-
 new Vue({
     delimiters: ['${', '}'],
-    components: {'revision-container': Revisions},
     data() {
-        return {saving: false, visible: true}
+        return {saving: false, visible: true, history: null, revision: null}
     },
     mounted() {
         let editor = ContentTools.EditorApp.get();
@@ -25,6 +19,17 @@ new Vue({
             e.preventDefault();
             this.askToClose();
             return false;
+        });
+
+        editor.addEventListener('start', e => {
+            setTimeout(() => {
+                const historyButton = document.createElement("div");
+                historyButton.setAttribute('data-ct-tooltip', 'Historie');
+                historyButton.classList.add('ct-tool', 'ct-tool--clock', 'ct-tool--disabled', 'revision-container');
+                document.querySelector('.ct-tool-group:last-child').appendChild(historyButton);
+                this.history = historyButton;
+                this.revision = new Vue({render(h) {return h(RevisionTool);}}).$mount( historyButton );
+            }, 100);
         });
 
         editor.addEventListener('saved', ev => {
@@ -42,7 +47,7 @@ new Vue({
                 }
             }
 
-            UIkit.notification('Ihre Änderungen wurden gespeichert');
+            UIkit.notification(document.contentEditorTranslations.changesSaved);
             setTimeout(function () {
                 editor.busy(false);
             }, 600);
@@ -74,7 +79,6 @@ new Vue({
                     }
                     editor._ignition.state("ready");
                     editor.dispatchEvent(editor.createEvent('stopped'));
-//                    this.close();
                 }
             }
         });
@@ -86,11 +90,32 @@ new Vue({
                 editor._ignition.show();
             }
         });
+
+        setTimeout(() => {
+            ContentEdit.Root.get().bind('focus', element => {
+                const dataset = element._parent._domElement.dataset;
+                if (dataset.getrevisions) {
+                    this.revision.$children[0].editMode = false;
+                    this.revision.$children[0].file = dataset.file;
+                    this.revision.$children[0].component = dataset.getrevisions;
+                    this.revision.$children[0].isFixture = dataset.fixture !== undefined;
+                    this.revision.$children[0].active = true;
+                } else {
+                    this.revision.$children[0].active = false;
+                }
+            });
+        }, 1000);
     },
     methods: {
         askToClose() {
             if (editor._rootLastModified && ContentEdit.Root.get().lastModified() > editor._rootLastModified) {
-                UIkit.modal.confirm('Ihre Ändernugen gehen verloren. Sind Sie sicher?', {labels: {ok: 'Ja', cancel: 'Nein'}}).then(() => {
+                UIkit.modal.confirm(
+                    document.contentEditorTranslations.changesLost, {
+                        labels: {
+                            ok: document.contentEditorTranslations.yes,
+                            cancel: document.contentEditorTranslations.no
+                        }
+                    }).then(() => {
                     this.revert();
                 }, () => {});
             } else {

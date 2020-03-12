@@ -1,26 +1,26 @@
 <template>
-    <div class="revision-selector" v-if="active && hasRevision">
-        <ul class="uk-iconnav">
-            <li v-if="!editMode"><i uk-icon="icon: history" @click="setEditMode(true)"></i></li>
-            <li @click="undo()" v-if="editMode"><i uk-icon="icon: close"></i></li>
-            <li @click="setEditMode(false)" v-if="editMode"><i uk-icon="icon: check" ></i></li>
-        </ul>
+    <div>
+        <div class="revision-selector ct-tool ct-tool--clock" :class="{'ct-tool--disabled': !active, 'ct-tool--applied': editMode}" @click="setEditMode()"></div>
         <transition name="fade">
-            <ul class="uk-nav uk-nav-default revision-list" v-if="editMode">
-                <li :class="{'uk-active': setVersion === -1}" @click="setRevision(-1)">Akutell</li>
-                <li :class="{'uk-active': setVersion === index}" v-for="(revision, index) in revisions" @click="setRevision(index)">
-                    {{revision.date}}
-                </li>
-            </ul>
+            <div class="selector" v-if="editMode">
+                <ul class="uk-nav uk-nav-default revision-list uk-text-right" >
+                    <li :class="{'uk-active': setVersion === -1}" @click="setRevision(-1)">{{translations.current}}</li>
+                    <li :class="{'uk-active': setVersion === index}" v-for="(revision, index) in revisions" @click="setRevision(index)">
+                        {{revision.date}}
+                    </li>
+                </ul>
+            </div>
         </transition>
     </div>
 </template>
 
 <script>
     export default {
-        props: ['file', 'component'],
+        name: 'RevisionContainer',
         data() {
             return {
+                file: '',
+                component: '',
                 currentRegion: null,
                 editMode: false,
                 active: false,
@@ -29,28 +29,26 @@
                 setVersion: -1,
                 revisions: [],
                 initialized: false,
-                isFixture: null
+                isFixture: null,
+                translations: document.contentEditorTranslations
             }
         },
         mounted() {
-            this.isFixture = document.querySelector(`*[data-file="${this.file}"]`).hasAttribute('data-fixture');
-            editor.addEventListener('start', () => {
-                this.active = true;
-                if (!this.initialized) {
-                    this.getRevisions();
-                }
-            });
-            editor.addEventListener('stopped', () => {
-                this.active = false;
-                this.setVersion = -1;
-            });
         },
         methods: {
             setEditMode(state) {
-                this.editMode = state;
-                if (state && !this.initialized) {
+                if (!this.active) return;
+                state = state === undefined ? !this.editMode : state;
+                if (state) {
+                    this.editMode = true;
                     this.getRevisions();
+                } else {
+                    this.editMode = false;
                 }
+            },
+            setData(file, component) {
+                this.file = file;
+                this.component = component;
             },
             getRevisions() {
                 $.request(
@@ -94,7 +92,7 @@
                         if (emptyElements) {
                             emptyElements.remove();
                         }
-                    }, 1000);
+                    }, 1500);
                 });
                 this.setVersion = index;
             },
@@ -106,15 +104,18 @@
     }
 </script>
 <style lang="scss">
-    .revision-selector {
+    .selector {
         position: absolute;
-        margin-top: -30px;
-        z-index: 100;
+        width: 170px;
+        left: -170px;
+        bottom: 0;
+        background: rgba(#fff, .9);
+        border: solid 1px #999;
+        box-shadow: -5px 5px 10px rgba(0, 0, 0, 0.2) !important;
         .revision-list {
-            background: rgba(#fff, .9);
-            border: solid 1px #999;
-            padding: 10px;
+            padding: 20px 10px;
             li {
+                padding: 2px 10px;
                 color: #222 !important;
                 text-align: left;
             }

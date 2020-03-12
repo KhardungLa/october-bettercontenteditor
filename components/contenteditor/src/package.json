@@ -9,8 +9,8 @@
     "author": "DEINNAME",
     "license": "ISC",
     "scripts": {
-        "build": "parcel build scripts/contenteditor.js -d ../../../assets --no-source-maps --no-content-hash --experimental-scope-hoisting --public-url ./",
-        "watch": "parcel watch scripts/contenteditor.js -d ../../../assets --public-url ./"
+        "build": "parcel build contenteditor.js -d ../../../assets --no-source-maps --no-content-hash --experimental-scope-hoisting --public-url ./",
+        "watch": "parcel watch contenteditor.js -d ../../../assets --public-url ./"
     },
     "alias": {
         "vue$": "vue/dist/vue.min.js"
@@ -22,8 +22,10 @@
         "vue-template-compiler": "^2.6.11"
     },
     "dependencies": {
+        "@vue/web-component-wrapper": "^1.2.0",
         "uikit": "^3.3.1",
         "vue": "^2.6.11",
+        "vue-fragment": "^1.5.1",
         "vue-hot-reload-api": "^2.3.4"
     }
 }
