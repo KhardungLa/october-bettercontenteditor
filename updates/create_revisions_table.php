@@ -13,7 +13,7 @@ class CreateRevisionsTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('item')->nullable();
-            $table->string('content')->nullable();
+            $table->text('content')->nullable();
             $table->timestamps();
         });
     }
