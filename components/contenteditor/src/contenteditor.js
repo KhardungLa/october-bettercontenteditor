@@ -29,6 +29,12 @@ new Vue({
                 document.querySelector('.ct-tool-group:last-child').appendChild(historyButton);
                 this.history = historyButton;
                 this.revision = new Vue({render(h) {return h(RevisionTool);}}).$mount( historyButton );
+
+                const logoutButton = document.createElement("div");
+                logoutButton.setAttribute('data-ct-tooltip', 'Logout');
+                logoutButton.classList.add('ct-tool', 'ct-tool--logout', 'revision-container');
+                logoutButton.addEventListener('click', () => $.request(document.logout));
+                document.querySelector('.ct-tool-group:last-child').appendChild(logoutButton);
             }, 100);
         });
 

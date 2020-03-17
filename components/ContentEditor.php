@@ -1,11 +1,14 @@
 <?php namespace DasRoteQuadrat\BetterContentEditor\Components;
 
+use Illuminate\Support\Facades\Redirect;
 use Lang;
 use Carbon\Carbon;
 use Log;
 use Cache;
 use File;
 use BackendAuth;
+use Session;
+use Backend;
 use App;
 use Cms\Classes\Content;
 use Cms\Classes\ComponentBase;
@@ -163,6 +166,13 @@ class ContentEditor extends ComponentBase
             return $this->renderContent($this->defaultFile);
         }
         return '';
+    }
+
+    public function onSignout()
+    {
+        BackendAuth::logout();
+        Session::flush();
+        return Redirect::to('/');
     }
 
     public function setFile($file)

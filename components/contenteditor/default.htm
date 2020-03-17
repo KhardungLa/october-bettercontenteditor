@@ -22,7 +22,10 @@
     <link rel="stylesheet" href="/plugins/dasrotequadrat/bettercontenteditor/assets/contenteditor.css" />
     {% endput %}
     {% put scripts %}
-    <script type="text/javascript">document.lang = '{{ lang }}';</script>
+    <script type="text/javascript">
+        document.lang = '{{ lang }}';
+        document.logout = '{{ __SELF__ }}::onSignout';
+    </script>
     <script type="text/javascript">document.contentEditorTranslations = {{ localisations | json_encode | raw}};</script>
     <script type="text/javascript" src="/plugins/dasrotequadrat/bettercontenteditor/assets/content-tools.min.js"></script>
     <script type="text/javascript" src="/plugins/dasrotequadrat/bettercontenteditor/assets/contenteditor.js"></script>
