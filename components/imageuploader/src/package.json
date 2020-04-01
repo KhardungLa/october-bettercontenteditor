@@ -19,10 +19,10 @@
         "babel-core": "^6.26.3",
         "babel-preset-env": "^1.7.0",
         "cssnano": "^4.1.10",
-        "sass": "^1.25.0"
+        "sass": "^1.26.3"
     },
     "dependencies": {
-        "uikit": "^3.3.2",
+        "uikit": "^3.3.7",
         "vue": "^2.6.11"
     }
 }

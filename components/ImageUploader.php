@@ -2,6 +2,7 @@
 
 use Cms\Classes\ComponentBase;
 use BackendAuth;
+use Log;
 use DasRoteQuadrat\BetterContentEditor\Models\Images;
 
 class ImageUploader extends ComponentBase {
@@ -21,7 +22,8 @@ class ImageUploader extends ComponentBase {
     }
 
     public function getImage($id, $placeholder) {
-        $urls = Images::where('item', $id)->pluck('url');
+        $theme = $this->getTheme()->getId();
+        $urls = Images::where('item', $theme.'.'.$id)->pluck('url');
         return $urls->count() > 0 ? $urls[0] : $placeholder;
     }
 

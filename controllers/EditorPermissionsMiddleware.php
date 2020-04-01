@@ -1,6 +1,7 @@
 <?php namespace DasRoteQuadrat\BetterContentEditor\Controllers;
 
 use Closure;
+use Illuminate\Support\Facades\Log;
 use Backend\Facades\BackendAuth;
 
 class EditorPermissionsMiddleware
@@ -8,7 +9,7 @@ class EditorPermissionsMiddleware
     public function handle($request, Closure $next)
     {
         $backendUser = BackendAuth::getUser();
-        if ($backendUser && $backendUser->hasAccess('samuell.contenteditor.editor')) {
+        if ($backendUser && $backendUser->hasAccess('dasrotequadrat.bettercontenteditor.editor')) {
             return $next($request);
         }
 

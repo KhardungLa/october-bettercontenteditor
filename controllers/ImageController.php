@@ -5,13 +5,16 @@ use Exception;
 use Response;
 use File;
 use Input;
+use BackendAuth;
+use Log;
+use Cms\Classes\Theme;
+use System\Classes\MediaLibrary;
+use Cms\Helpers\File as FileHelper;
 use Illuminate\Routing\Controller;
 use October\Rain\Database\Attach\Resizer;
-use Cms\Classes\MediaLibrary;
-use Cms\Helpers\File as FileHelper;
-use DasRoteQuadrat\BetterContentEditor\Models\Settings;
-use DasRoteQuadrat\BetterContentEditor\EditorPermissionsMiddleware;
 use October\Rain\Support\Facades\Str;
+use DasRoteQuadrat\BetterContentEditor\Models\Settings;
+use DasRoteQuadrat\BetterContentEditor\Models\Images;
 
 class ImageController extends Controller
 {
@@ -125,5 +128,56 @@ class ImageController extends Controller
                 $height
             ]
         ]);
+    }
+
+    public function saveImageUploader() {
+        try {
+            if (!Input::hasFile('image')) {
+                throw new ApplicationException('File missing from request');
+            }
+
+            $uploadedFile = Input::file('image')[0];
+            $fileName = $uploadedFile->getClientOriginalName();
+
+            // Convert uppcare case file extensions to lower case
+            $extension = strtolower($uploadedFile->getClientOriginalExtension());
+            $fileName = File::name($fileName).'.'.$extension;
+
+            // File name contains non-latin characters, attempt to slug the value
+            if (!FileHelper::validateName($fileName)) {
+                $fileNameSlug = Str::slug(File::name($fileName), '-');
+                $fileName = $fileNameSlug.'.'.$extension;
+            }
+            if (!$uploadedFile->isValid()) {
+                throw new ApplicationException($uploadedFile->getErrorMessage());
+            }
+
+            $path = Settings::get('image_folder', 'contenteditor');
+            $path = MediaLibrary::validatePath($path);
+
+            MediaLibrary::instance()->put(
+                $path.'/'.$fileName,
+                File::get($uploadedFile->getRealPath())
+            );
+
+            list($width, $height) = getimagesize($uploadedFile);
+            $theme = Theme::getActiveTheme()->getId();
+            $id = Input::input('item');
+            $item = Images::firstOrCreate(['item' => $theme.'.'.$id]);
+            $item->url = MediaLibrary::instance()->getPathUrl($path.'/'.$fileName);
+            $item->save();
+
+            return Response::json([
+                'url'      => MediaLibrary::instance()->getPathUrl($path.'/'.$fileName),
+                'filename' => $fileName,
+                'size'     => [
+                    $width,
+                    $height
+                ]
+            ]);
+        }
+        catch (Exception $ex) {
+            return $ex;
+        }
     }
 }

@@ -38,12 +38,16 @@ new Vue({
                 component.params = {item: element.getAttribute('id')};
             },
             completeAll: xhr => {
+                if (!xhr.response) {
+                    UIkit.notification('<span style="color: #cb3235">Sie haben nicht die Rechte zum Hochladen.</span>');
+                    return;
+                }
                 if (element.classList.contains('uses-image')) {
                     element.querySelector('img').src = JSON.parse(xhr.response).url;
                 } else {
                     element.style.backgroundImage = `url(${JSON.parse(xhr.response).url})`;
                 }
-                UIkit.notification('Bild wurde gespeichert');
+                UIkit.notification('Bild wurde gespeichert.');
             }
         });
 
