@@ -77,7 +77,7 @@ class ContentEditor extends ComponentBase
 
             // put content tools js + css
             $this->addCss('assets/content-tools.min.css');
-//            $this->addCss('assets/contenteditor.css');
+            $this->addCss('assets/contenteditor.css');
         }
     }
 
@@ -186,16 +186,23 @@ class ContentEditor extends ComponentBase
     public function setTranslateFile($file)
     {
         $translate = \RainLab\Translate\Classes\Translator::instance();
+        $locales = \RainLab\Translate\Models\Locale::listEnabled();
         $defaultLocale = $translate->getDefaultLocale();
         $locale = $translate->getLocale();
 
         // Compability with Rainlab.StaticPage
         // StaticPages content does not append default locale to file.
-        if ($this->fileExists($file) && $locale === $defaultLocale) {
+        if ($this->fileExists($file) && ($locale === $defaultLocale || count($locales) < 2)) {
             return $file;
         }
 
-        return substr_replace($file, '.'.$locale, strrpos($file, '.'), 0);
+        $dotPos = strrpos($file, '.');
+        $injectLocale = $dotPos == false ? strlen($file) - 1 : $dotPos;
+        if ($dotPos == false) {
+            return $file . '.'.$locale . '.htm';
+        } else {
+            return substr_replace($file, '.'.$locale, $injectLocale, 0);
+        }
     }
 
     public function checkEditor()
