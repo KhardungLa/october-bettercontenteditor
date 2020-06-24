@@ -192,7 +192,7 @@ class ContentEditor extends ComponentBase
 
         // Compability with Rainlab.StaticPage
         // StaticPages content does not append default locale to file.
-        if ($this->fileExists($file) && ($locale === $defaultLocale || count($locales) < 2)) {
+        if (($this->fileExists($file) && $locale === $defaultLocale) || count($locales) < 2) {
             return $file;
         }
 
