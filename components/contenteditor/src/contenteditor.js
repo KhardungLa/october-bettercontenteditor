@@ -35,6 +35,7 @@ new Vue({
                 logoutButton.classList.add('ct-tool', 'ct-tool--logout', 'revision-container');
                 logoutButton.addEventListener('click', () => $.request(document.logout));
                 document.querySelector('.ct-tool-group:last-child').appendChild(logoutButton);
+                this.setEditMode();
             }, 100);
         });
 
@@ -68,6 +69,7 @@ new Vue({
                         editor._ignition.show();
                     }
                     this.visible = !this.visible;
+                    this.quitEditMode()
                 } else {
                     this.askToClose();
                 }
@@ -85,6 +87,7 @@ new Vue({
                     }
                     editor._ignition.state("ready");
                     editor.dispatchEvent(editor.createEvent('stopped'));
+                    this.quitEditMode()
                 }
             }
         });
@@ -94,6 +97,7 @@ new Vue({
                 e.preventDefault();
                 editor._ignition.edit();
                 editor._ignition.show();
+                this.setEditMode()
             }
         });
 
@@ -113,6 +117,12 @@ new Vue({
         }, 1000);
     },
     methods: {
+        setEditMode() {
+            document.getElementsByTagName('body')[0].classList.add('bce-edit-mode');
+        },
+        quitEditMode() {
+            document.getElementsByTagName('body')[0].classList.remove('bce-edit-mode');
+        },
         askToClose() {
             if (editor._rootLastModified && ContentEdit.Root.get().lastModified() > editor._rootLastModified) {
                 UIkit.modal.confirm(
@@ -152,6 +162,7 @@ new Vue({
             }
             editor._ignition.state("ready");
             editor.dispatchEvent(editor.createEvent('stopped'));
+            this.quitEditMode();
         },
         elementSelected(file) {
             console.log(file);

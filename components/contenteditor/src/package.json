@@ -23,7 +23,7 @@
     },
     "dependencies": {
         "@vue/web-component-wrapper": "^1.2.0",
-        "uikit": "^3.3.1",
+        "uikit": "^3.5.5",
         "vue": "^2.6.11",
         "vue-fragment": "^1.5.1",
         "vue-hot-reload-api": "^2.3.4"
