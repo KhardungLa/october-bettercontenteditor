@@ -28,6 +28,8 @@ class Settings extends Model
             'bold'           => 'Bold (b)',
             'italic'         => 'Italic (i)',
             'link'           => 'Link (a)',
+            'styled'         => 'Styled (span)',
+
 
             'align-left'     => 'Align left',
             'align-center'   => 'Align center',

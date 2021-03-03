@@ -9511,7 +9511,7 @@
     };
 
     Bold.apply = function(element, selection, callback) {
-      var from, to, toolDetail, _ref;
+      var from, tag, to, toolDetail, _ref;
       toolDetail = {
         'tool': this,
         'element': element,
@@ -9522,10 +9522,17 @@
       }
       element.storeState();
       _ref = selection.get(), from = _ref[0], to = _ref[1];
-      if (this.isApplied(element, selection)) {
-        element.content = element.content.unformat(from, to, new HTMLString.Tag(this.tagName));
+      if (this.className) {
+        tag = new HTMLString.Tag(this.tagName, {
+          "class": this.className
+        });
       } else {
-        element.content = element.content.format(from, to, new HTMLString.Tag(this.tagName));
+        tag = new HTMLString.Tag(this.tagName);
+      }
+      if (this.isApplied(element, selection)) {
+        element.content = element.content.unformat(from, to, tag);
+      } else {
+        element.content = element.content.format(from, to, tag);
       }
       element.content.optimize();
       element.updateInnerHTML();
@@ -9555,6 +9562,27 @@
     Italic.tagName = 'i';
 
     return Italic;
+
+  })(ContentTools.Tools.Bold);
+
+  ContentTools.Tools.Styled = (function(_super) {
+    __extends(Styled, _super);
+
+    function Styled() {
+      return Styled.__super__.constructor.apply(this, arguments);
+    }
+
+    ContentTools.ToolShelf.stow(Styled, 'styled');
+
+    Styled.label = 'Styled';
+
+    Styled.icon = 'italic';
+
+    Styled.tagName = 'span';
+
+    Styled.className = 'highlight-text';
+
+    return Styled;
 
   })(ContentTools.Tools.Bold);
 

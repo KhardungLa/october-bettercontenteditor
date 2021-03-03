@@ -16,7 +16,7 @@ class Plugin extends PluginBase
     public $elevated = true;
 
     public function boot() {
-        Event::listen('backend.user.login', function($user) {
+/*        Event::listen('backend.user.login', function($user) {
             if ($user->role->code === 'publisher') {
                 Session::put('redirectAfterLogin', '/');
             }
@@ -25,7 +25,7 @@ class Plugin extends PluginBase
             if ($redirectAfterLogin = Session::pull('redirectAfterLogin', null)) {
                 return Redirect::to($redirectAfterLogin); // do redirect
             }
-        });
+        });*/
     }
 
     public function pluginDetails()

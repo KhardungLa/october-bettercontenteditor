@@ -39,6 +39,7 @@ new Vue({
             }, 100);
         });
 
+
         editor.addEventListener('saved', ev => {
             editor.busy(true);
             const regions = ev.detail().regions;
