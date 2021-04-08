@@ -1,13 +1,12 @@
 {% set size = __SELF__.property('size') ? __SELF__.property('size') : 1300 %}
 {% set size_small = __SELF__.property('size-small') ? __SELF__.property('size-small') : (size/2) %}
-{% set classes = __SELF__.property('class') ? __SELF__.property('class') : 'uk-background-cover uk-height-large' %}
+{% set classes = __SELF__.property('class') ? __SELF__.property('class') : 'uk-background-cover uk-height-large uk-position-relative' %}
 {% set attributes = __SELF__.property('attributes') ? __SELF__.property('attributes') : '' %}
 {% set defaultImage = __SELF__.property('default') ? __SELF__.property('default') : '/dasrotequadrat/bettercontenteditor/assets/images/placeholder.jpg' %}
 {% set background = __SELF__.getImage(__SELF__.property('item'), defaultImage) %}
 {% set leaveOpen = __SELF__.property('leaveOpen') == 1 ? true : false %}
 
-{% if user %}
-
+{% if backendUser %}
     {% if __SELF__.renderCount == 1 %}
     {% put styles %}
     <link rel="stylesheet" href="/plugins/dasrotequadrat/bettercontenteditor/assets/imageuploader.css" />
@@ -18,8 +17,8 @@
     {% endif %}
 
     {% if __SELF__.property('tag') == 'img' %}
-    <div id="{{__SELF__.property('item')}}" class="{{classes}} uk-position-relative js-upload uk-position-relative uk-text-center uses-image">
-        <img src="{{ background | resize(size) }}">
+    <div id="{{__SELF__.property('item')}}" class="{{classes}} js-upload uk-text-center uses-image">
+        <img src="{{ background | resize(size) }}" {{attributes}}>
         <div class="uk-position-cover js-uploader">
             <div class="uk-position-center">
                 <div class="uk-text-center">
@@ -34,7 +33,7 @@
         </div>
     </div>
     {% else %}
-    <div id="{{__SELF__.property('item')}}" {{attributes}} class="js-upload uk-position-relative uk-text-center {{classes}}" style="background-image: url({{ background | resize(size) }})">
+    <div id="{{__SELF__.property('item')}}" {{attributes}} class="js-upload uk-text-center {{classes}}" style="background-image: url({{ background | resize(size) }})">
         <div class="uk-position-cover js-uploader">
             <div class="uk-position-center">
                 <div class="uk-text-center">

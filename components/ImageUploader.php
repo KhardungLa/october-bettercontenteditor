@@ -19,6 +19,7 @@ class ImageUploader extends ComponentBase {
 
     public function onRun() {
         $this->renderCount = 0;
+        $this->page['backendUser'] = BackendAuth::getUser();
     }
 
     public function getImage($id, $placeholder) {
