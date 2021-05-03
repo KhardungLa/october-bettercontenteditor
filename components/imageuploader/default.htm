@@ -17,7 +17,7 @@
     {% endif %}
 
     {% if __SELF__.property('tag') == 'img' %}
-    <div id="{{__SELF__.property('item')}}" class="{{classes}} js-upload uk-text-center uses-image">
+    <div id="{{__SELF__.property('item')}}" class="{{classes}} uk-cover-container js-upload uk-text-center uses-image">
         <img src="{{ background | resize(size) }}" {{attributes}}>
         <div class="uk-position-cover js-uploader">
             <div class="uk-position-center">
