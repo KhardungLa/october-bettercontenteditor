@@ -26,6 +26,7 @@ class ContentEditor extends ComponentBase
     public $buttons;
     public $palettes;
     public $renderCount;
+    public $src;
 
     public function componentDetails()
     {
@@ -59,6 +60,11 @@ class ContentEditor extends ComponentBase
                 'description' => 'CSS class or classes that should be applied to the content block when rendered',
                 'default'     => ''
             ],
+            'src' => [
+                'title'       => 'Quelle',
+                'description' => 'CSS class or classes that should be applied to the content block when rendered',
+                'default'     => ''
+            ]
         ];
     }
 
@@ -87,7 +93,19 @@ class ContentEditor extends ComponentBase
 
         $this->defaultFile = $this->property('file');
         $this->file = $this->setFile($this->property('file'));
-        $content = $this->getFile();
+
+        $src = $this->property('src') != '' ? json_decode($this->property('src')) : null;
+        $content = '';
+
+        if ($src) {
+            $model = '\\'.str_replace('.', '\\', $src->model);
+            $instance = $model::find($src->id);
+            if ($instance) {
+                $content = $instance[$src->field];
+            }
+        } else {
+            $content = $this->getFile();
+        }
 
         if ($this->checkEditor()) {
             $this->fixture = $this->property('fixture');
@@ -97,7 +115,7 @@ class ContentEditor extends ComponentBase
             $this->page['hasRevisions'] = $this->hasRevisions();
             $this->page['lang'] = App::getLocale();
             if ($this->page['lang'] !== 'en') {
-                $this->page['translations'] = file_get_contents(__DIR__ .'/contenteditor/translations/' . $this->page['lang'] . '.json', FALSE, NULL);
+                $this->page['translations'] = file_get_contents(__DIR__ . '/contenteditor/translations/' . $this->page['lang'] . '.json', FALSE, NULL);
             }
             $this->content = $content;
         } else {
@@ -119,28 +137,39 @@ class ContentEditor extends ComponentBase
     public function onSave()
     {
         if ($this->checkEditor()) {
+            $src = post('src') != '' ? json_decode(post('src')) : null;
 
-            $fileName = post('file');
-
-            if ($load = Content::load($this->getTheme(), $fileName)) {
-                $fileContent = $load;
+            if ($src) {
+                $model = '\\'.str_replace('.', '\\', $src->model);
+                $instance = $model::find($src->id);
+                if ($instance) {
+                    $instance[$src->field] = post('content');
+                    $instance->save();
+                }
             } else {
-                $fileContent = Content::inTheme($this->getTheme());
+
+                $fileName = post('file');
+
+                if ($load = Content::load($this->getTheme(), $fileName)) {
+                    $fileContent = $load;
+                } else {
+                    $fileContent = Content::inTheme($this->getTheme());
+                }
+                $contentToSave = post('content');
+
+                $fileContent->fill([
+                    'fileName' => $fileName,
+                    'markup' => $contentToSave
+                ]);
+
+                $fileContent->save();
+
+                $itemName = $this->getItemName($fileName);
+                $contentStore = CmsContent::firstOrCreate(['item' => $itemName]);
+                $contentStore->content = $contentToSave;
+                $contentStore->save();
+                Cache::forget('bettercontenteditor::content-' . $fileName);
             }
-            $contentToSave = post('content');
-
-            $fileContent->fill([
-                'fileName' => $fileName,
-                'markup' => $contentToSave
-            ]);
-
-            $fileContent->save();
-
-            $itemName = $this->getItemName($fileName);
-            $contentStore = CmsContent::firstOrCreate(['item' => $itemName]);
-            $contentStore->content = $contentToSave;
-            $contentStore->save();
-            Cache::forget('bettercontenteditor::content-' . $fileName);
         }
     }
 

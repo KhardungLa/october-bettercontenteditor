@@ -1,16 +1,15 @@
 <?php namespace DasRoteQuadrat\BetterContentEditor\Components;
 
-use Cms\Classes\ComponentBase;
-use BackendAuth;
 use Log;
+use BackendAuth;
+use Cms\Classes\ComponentBase;
 use DasRoteQuadrat\BetterContentEditor\Models\Images;
 
 class ImageUploader extends ComponentBase {
 
     public $renderCount;
 
-    public function componentDetails()
-    {
+    public function componentDetails() {
         return [
             'name'        => 'ImageUploader',
             'description' => 'Lade Bilder wie beim ContentEditor im Frontend hoch'

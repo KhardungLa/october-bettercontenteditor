@@ -30,7 +30,7 @@ new Vue({
             }
         }, 500);
         let element = UIkit.upload('.js-upload', {
-            url: 'dasrotequadrat/image/upload',
+            url: '/dasrotequadrat/image/upload',
             multiple: false,
             name: 'image[]',
             beforeAll: component => {

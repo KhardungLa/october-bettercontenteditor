@@ -46,11 +46,12 @@ new Vue({
             for (let name in regions) {
                 if (regions.hasOwnProperty(name)) {
                     const content = document.querySelector('*[data-file="' + name + '"]');
+                    const src = content.getAttribute('data-src');
                     const isFixture = content.hasAttribute('data-fixture');
                     const htmlData = isFixture ? content.innerHTML.trim() : regions[name];
                     $.request(
                         content.getAttribute('data-component'),
-                        {data: {file: name, content: htmlData}}
+                        {data: {file: name, content: htmlData, src}}
                     );
                 }
             }

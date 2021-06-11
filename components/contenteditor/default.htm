@@ -5,6 +5,7 @@
     data-file="{{ __SELF__.file }}"
     data-tools="{{ __SELF__.tools }}"
     data-name="{{ __SELF__.file }}"
+    data-src="{{ __SELF__.property('src') }}"
     {% if __SELF__.class %}class="{{ __SELF__.class }}"{% endif %}>
     {% if (__SELF__.content|raw) == '' %}
         {% if __SELF__.fixture %}
